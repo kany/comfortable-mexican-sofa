@@ -151,13 +151,13 @@ class MirrorsTest < ActiveSupport::TestCase
   
   def test_site_creation_as_mirror
     site = cms_sites(:default)
-    Cms::Site.update_all(:is_mirrored => true) # bypassing callbacks
+    Cms::CmsSite.update_all(:is_mirrored => true) # bypassing callbacks
     
-    assert_difference 'Cms::Site.count' do
+    assert_difference 'Cms::CmsSite.count' do
       assert_difference 'Cms::Layout.count', site.layouts.count do
         assert_difference 'Cms::Page.count', site.pages.count do
           assert_difference 'Cms::Snippet.count', site.snippets.count do
-            mirror = Cms::Site.create!(
+            mirror = Cms::CmsSite.create!(
               :identifier   => 'mirror',
               :hostname     => 'mirror.host',
               :is_mirrored  => true
@@ -170,9 +170,9 @@ class MirrorsTest < ActiveSupport::TestCase
   
   def test_site_update_to_mirror
     site = cms_sites(:default)
-    Cms::Site.update_all(:is_mirrored => true) # bypassing callbacks
+    Cms::CmsSite.update_all(:is_mirrored => true) # bypassing callbacks
     
-    mirror = Cms::Site.create!(
+    mirror = Cms::CmsSite.create!(
       :identifier => 'mirror',
       :hostname   => 'mirror.host'
     )
@@ -217,9 +217,9 @@ class MirrorsTest < ActiveSupport::TestCase
   
   def test_site_destruction
     site = cms_sites(:default)
-    Cms::Site.update_all(:is_mirrored => true) # bypassing callbacks
+    Cms::CmsSite.update_all(:is_mirrored => true) # bypassing callbacks
     
-    mirror = Cms::Site.create!(
+    mirror = Cms::CmsSite.create!(
       :identifier   => 'mirror',
       :hostname     => 'mirror.host',
       :is_mirrored  => true
@@ -234,9 +234,9 @@ class MirrorsTest < ActiveSupport::TestCase
 protected
   
   def setup_sites
-    Cms::Site.delete_all
-    @site_a = Cms::Site.create!(:identifier => 'site_a', :hostname => 'site-a.host', :is_mirrored => true)
-    @site_b = Cms::Site.create!(:identifier => 'site_b', :hostname => 'site-b.host', :is_mirrored => true)
+    Cms::CmsSite.delete_all
+    @site_a = Cms::CmsSite.create!(:identifier => 'site_a', :hostname => 'site-a.host', :is_mirrored => true)
+    @site_b = Cms::CmsSite.create!(:identifier => 'site_b', :hostname => 'site-b.host', :is_mirrored => true)
   end
   
 end

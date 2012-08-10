@@ -244,7 +244,7 @@ class FixturesTest < ActiveSupport::TestCase
   def test_import_all_with_no_site
     cms_sites(:default).destroy
     
-    assert_difference 'Cms::Site.count', 1 do
+    assert_difference 'Cms::CmsSite.count', 1 do
       assert_difference 'Cms::Layout.count', 2 do
         assert_difference 'Cms::Page.count', 2 do
           assert_difference 'Cms::Snippet.count', 1 do

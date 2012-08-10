@@ -3,31 +3,31 @@ require File.expand_path('../../test_helper', File.dirname(__FILE__))
 class CmsSiteTest < ActiveSupport::TestCase
   
   def test_fixtures_validity
-    Cms::Site.all.each do |site|
+    Cms::CmsSite.all.each do |site|
       assert site.valid?, site.errors.full_messages.to_s
     end
   end
   
   def test_validation
-    site = Cms::Site.new
+    site = Cms::CmsSite.new
     assert site.invalid?
     assert_has_errors_on site, [:identifier, :label, :hostname]
     
-    site = Cms::Site.new(:identifier => 'test', :hostname => 'http://site.host')
+    site = Cms::CmsSite.new(:identifier => 'test', :hostname => 'http://site.host')
     assert site.invalid?
     assert_has_errors_on site, :hostname
     
-    site = Cms::Site.new(:identifier => cms_sites(:default).identifier, :hostname => 'site.host')
+    site = Cms::CmsSite.new(:identifier => cms_sites(:default).identifier, :hostname => 'site.host')
     assert site.invalid?
     assert_has_errors_on site, :identifier
     
-    site = Cms::Site.new(:identifier => 'test', :hostname => 'site.host')
+    site = Cms::CmsSite.new(:identifier => 'test', :hostname => 'site.host')
     assert site.valid?, site.errors.to_yaml
   end
   
   def test_validation_path_uniqueness
     s1 = cms_sites(:default)
-    s2 = Cms::Site.new(
+    s2 = Cms::CmsSite.new(
       :identifier => 'test',
       :hostname   => s1.hostname,
       :path       => s1.path
@@ -35,7 +35,7 @@ class CmsSiteTest < ActiveSupport::TestCase
     assert s2.invalid?
     assert_has_errors_on s2, :hostname
     
-    s2 = Cms::Site.new(
+    s2 = Cms::CmsSite.new(
       :identifier => 'test',
       :hostname   => s1.hostname,
       :path       => '/en'
@@ -44,28 +44,28 @@ class CmsSiteTest < ActiveSupport::TestCase
   end
   
   def test_identifier_assignment
-    site = Cms::Site.new(:hostname => 'my-site.host')
+    site = Cms::CmsSite.new(:hostname => 'my-site.host')
     assert site.valid?
     assert_equal 'my_site_host', site.identifier
   end
   
   def test_label_assignment
-    site = Cms::Site.new(:identifier => 'test', :hostname => 'my-site.host')
+    site = Cms::CmsSite.new(:identifier => 'test', :hostname => 'my-site.host')
     assert site.valid?
     assert_equal 'Test', site.label
   end
   
   def test_clean_path
-    site = Cms::Site.create!(:identifier => 'test_a', :hostname => 'test.host', :path => '/en///test//')
+    site = Cms::CmsSite.create!(:identifier => 'test_a', :hostname => 'test.host', :path => '/en///test//')
     assert_equal '/en/test', site.path
     
-    site = Cms::Site.create!(:identifier => 'test_b', :hostname => 'my-site.host', :path => '/')
+    site = Cms::CmsSite.create!(:identifier => 'test_b', :hostname => 'my-site.host', :path => '/')
     assert_equal '', site.path
   end
   
   def test_creation
-    assert_difference 'Cms::Site.count' do
-      Cms::Site.create!(
+    assert_difference 'Cms::CmsSite.count' do
+      Cms::CmsSite.create!(
         :identifier => 'test',
         :label      => 'Test Site',
         :hostname   => 'test.test'
@@ -74,7 +74,7 @@ class CmsSiteTest < ActiveSupport::TestCase
   end
   
   def test_cascading_destroy
-    assert_difference 'Cms::Site.count', -1 do
+    assert_difference 'Cms::CmsSite.count', -1 do
       assert_difference 'Cms::Layout.count', -3 do
         assert_difference 'Cms::Page.count', -2 do
           assert_difference 'Cms::Snippet.count', -1 do
@@ -90,9 +90,9 @@ class CmsSiteTest < ActiveSupport::TestCase
   def test_scope_mirrored
     site = cms_sites(:default)
     assert !site.is_mirrored
-    assert_equal 0, Cms::Site.mirrored.count
+    assert_equal 0, Cms::CmsSite.mirrored.count
     site.update_column(:is_mirrored, true)
-    assert_equal 1, Cms::Site.mirrored.count
+    assert_equal 1, Cms::CmsSite.mirrored.count
   end
   
   def test_find_site
@@ -100,39 +100,39 @@ class CmsSiteTest < ActiveSupport::TestCase
     assert_equal 'test.host', site_a.hostname
     assert_equal nil, site_a.path
     
-    assert_equal site_a, Cms::Site.find_site('test.host')
-    assert_equal site_a, Cms::Site.find_site('test.host', '/some/path')
-    assert_equal site_a, Cms::Site.find_site('test99.host', '/some/path')
+    assert_equal site_a, Cms::CmsSite.find_site('test.host')
+    assert_equal site_a, Cms::CmsSite.find_site('test.host', '/some/path')
+    assert_equal site_a, Cms::CmsSite.find_site('test99.host', '/some/path')
     
-    site_b = Cms::Site.create!(:identifier => 'test_a', :hostname => 'test2.host', :path => 'en')
-    site_c = Cms::Site.create!(:identifier => 'test_b', :hostname => 'test2.host', :path => 'fr')
+    site_b = Cms::CmsSite.create!(:identifier => 'test_a', :hostname => 'test2.host', :path => 'en')
+    site_c = Cms::CmsSite.create!(:identifier => 'test_b', :hostname => 'test2.host', :path => 'fr')
     
-    assert_equal site_a,  Cms::Site.find_site('test.host')
-    assert_equal site_a,  Cms::Site.find_site('test.host', '/some/path')
-    assert_equal nil,     Cms::Site.find_site('test99.host', '/some/path')
+    assert_equal site_a,  Cms::CmsSite.find_site('test.host')
+    assert_equal site_a,  Cms::CmsSite.find_site('test.host', '/some/path')
+    assert_equal nil,     Cms::CmsSite.find_site('test99.host', '/some/path')
     
-    assert_equal nil,     Cms::Site.find_site('test2.host')
-    assert_equal nil,     Cms::Site.find_site('test2.host', '/some/path')
-    assert_equal site_b,  Cms::Site.find_site('test2.host', '/en')
-    assert_equal site_b,  Cms::Site.find_site('test2.host', '/en/some/path')
-    assert_equal nil,     Cms::Site.find_site('test2.host', '/english/some/path')
+    assert_equal nil,     Cms::CmsSite.find_site('test2.host')
+    assert_equal nil,     Cms::CmsSite.find_site('test2.host', '/some/path')
+    assert_equal site_b,  Cms::CmsSite.find_site('test2.host', '/en')
+    assert_equal site_b,  Cms::CmsSite.find_site('test2.host', '/en/some/path')
+    assert_equal nil,     Cms::CmsSite.find_site('test2.host', '/english/some/path')
     
-    assert_equal site_c,  Cms::Site.find_site('test2.host', '/fr')
-    assert_equal site_c,  Cms::Site.find_site('test2.host', '/fr/some/path')
+    assert_equal site_c,  Cms::CmsSite.find_site('test2.host', '/fr')
+    assert_equal site_c,  Cms::CmsSite.find_site('test2.host', '/fr/some/path')
   end
   
   def test_find_site_with_site_alias
     site_a = cms_sites(:default)
-    site_b = Cms::Site.create!(:identifier => 'site_b', :hostname => 'test2.host')
+    site_b = Cms::CmsSite.create!(:identifier => 'site_b', :hostname => 'test2.host')
     
     ComfortableMexicanSofa.config.hostname_aliases = {
       'test.host'   => 'alias_a.host',
       'test2.host'  => %w(alias_b.host alias_c.host)
     }
     
-    assert_equal site_a, Cms::Site.find_site('alias_a.host')
-    assert_equal site_b, Cms::Site.find_site('alias_b.host')
-    assert_equal site_b, Cms::Site.find_site('alias_c.host')
+    assert_equal site_a, Cms::CmsSite.find_site('alias_a.host')
+    assert_equal site_b, Cms::CmsSite.find_site('alias_b.host')
+    assert_equal site_b, Cms::CmsSite.find_site('alias_c.host')
   end
   
 end

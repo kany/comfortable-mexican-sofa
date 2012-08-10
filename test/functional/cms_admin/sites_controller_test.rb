@@ -10,7 +10,7 @@ class CmsAdmin::SitesControllerTest < ActionController::TestCase
   end
 
   def test_get_index_with_no_sites
-    Cms::Site.delete_all
+    Cms::CmsSite.delete_all
     get :index
     assert_response :redirect
     assert_redirected_to :action => :new
@@ -42,21 +42,21 @@ class CmsAdmin::SitesControllerTest < ActionController::TestCase
   end
   
   def test_create
-    assert_difference 'Cms::Site.count' do
+    assert_difference 'Cms::CmsSite.count' do
       post :create, :site => {
         :label      => 'Test Site',
         :identifier => 'test-site',
         :hostname   => 'test.site.local'
       }
       assert_response :redirect
-      site = Cms::Site.last
+      site = Cms::CmsSite.last
       assert_redirected_to cms_admin_site_layouts_path(site)
       assert_equal 'Site created', flash[:notice]
     end
   end
 
   def test_creation_failure
-    assert_no_difference 'Cms::Site.count' do
+    assert_no_difference 'Cms::CmsSite.count' do
       post :create, :site => { }
       assert_response :success
       assert_template :new
@@ -95,7 +95,7 @@ class CmsAdmin::SitesControllerTest < ActionController::TestCase
   end
 
   def test_destroy
-    assert_difference 'Cms::Site.count', -1 do
+    assert_difference 'Cms::CmsSite.count', -1 do
       delete :destroy, :id => cms_sites(:default)
       assert_response :redirect
       assert_redirected_to :action => :index

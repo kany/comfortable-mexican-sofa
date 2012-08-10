@@ -10,7 +10,7 @@
   when Cms::Snippet
     object.mirrors.collect{|m| [m.site.label, edit_cms_admin_site_snippet_path(m.site, m)]}
   else
-    (Cms::Site.mirrored - [@site]).collect{|s| [s.label, url_for(params.merge(:site_id => s))]}
+    (Cms::CmsSite.mirrored - [@site]).collect{|s| [s.label, url_for(params.merge(:site_id => s))]}
   end
   options = [[@site.label, request.fullpath]] + options
 %>

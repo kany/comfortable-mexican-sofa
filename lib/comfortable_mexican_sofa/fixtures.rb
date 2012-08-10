@@ -13,7 +13,7 @@ module ComfortableMexicanSofa::Fixtures
   end
   
   def self.import_layouts(to_hostname, from_hostname = nil, path = nil, root = true, parent = nil, layout_ids = [])
-    site = Cms::Site.find_or_create_by_hostname(to_hostname)
+    site = Cms::CmsSite.find_or_create_by_hostname(to_hostname)
     unless path ||= find_fixtures_path((from_hostname || to_hostname), 'layouts')
       ComfortableMexicanSofa.logger.warn('Cannot find Layout fixtures')
       return []
@@ -80,7 +80,7 @@ module ComfortableMexicanSofa::Fixtures
   end
   
   def self.import_pages(to_hostname, from_hostname = nil, path = nil, root = true, parent = nil, page_ids = [])
-    site = Cms::Site.find_or_create_by_hostname(to_hostname)
+    site = Cms::CmsSite.find_or_create_by_hostname(to_hostname)
     unless path ||= find_fixtures_path((from_hostname || to_hostname), 'pages')
       ComfortableMexicanSofa.logger.warn('Cannot find Page fixtures')
       return []
@@ -158,7 +158,7 @@ module ComfortableMexicanSofa::Fixtures
   end
   
   def self.import_snippets(to_hostname, from_hostname = nil)
-    site = Cms::Site.find_or_create_by_hostname(to_hostname)
+    site = Cms::CmsSite.find_or_create_by_hostname(to_hostname)
     unless path = find_fixtures_path((from_hostname || to_hostname), 'snippets')
       ComfortableMexicanSofa.logger.warn('Cannot find Snippet fixtures')
       return []
@@ -204,7 +204,7 @@ module ComfortableMexicanSofa::Fixtures
   end
   
   def self.export_layouts(from_hostname, to_hostname = nil)
-    return unless site = Cms::Site.find_by_hostname(from_hostname)
+    return unless site = Cms::CmsSite.find_by_hostname(from_hostname)
     path = File.join(ComfortableMexicanSofa.config.fixtures_path, (to_hostname || site.hostname), 'layouts')
     FileUtils.rm_rf(path)
     FileUtils.mkdir_p(path)
@@ -234,7 +234,7 @@ module ComfortableMexicanSofa::Fixtures
   end
   
   def self.export_pages(from_hostname, to_hostname = nil)
-    return unless site = Cms::Site.find_by_hostname(from_hostname)
+    return unless site = Cms::CmsSite.find_by_hostname(from_hostname)
     path = File.join(ComfortableMexicanSofa.config.fixtures_path, (to_hostname || site.hostname), 'pages')
     FileUtils.rm_rf(path)
     FileUtils.mkdir_p(path)
@@ -263,7 +263,7 @@ module ComfortableMexicanSofa::Fixtures
   end
   
   def self.export_snippets(from_hostname, to_hostname = nil)
-    return unless site = Cms::Site.find_by_hostname(from_hostname)
+    return unless site = Cms::CmsSite.find_by_hostname(from_hostname)
     path = File.join(ComfortableMexicanSofa.config.fixtures_path, (to_hostname || site.hostname), 'snippets')
     FileUtils.rm_rf(path)
     FileUtils.mkdir_p(path)

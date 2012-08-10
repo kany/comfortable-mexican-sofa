@@ -65,7 +65,7 @@ class CmsContentControllerTest < ActionController::TestCase
   end
   
   def test_render_page_with_no_site
-    Cms::Site.destroy_all
+    Cms::CmsSite.destroy_all
     
     assert_exception_raised ActionController::RoutingError, 'Site Not Found' do
       get :render_html, :cms_path => ''

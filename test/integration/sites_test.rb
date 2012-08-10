@@ -11,7 +11,7 @@ class SitesTest < ActionDispatch::IntegrationTest
   end
   
   def test_get_admin_with_no_site
-    Cms::Site.delete_all
+    Cms::CmsSite.delete_all
     http_auth :get, cms_admin_path
     assert_response :redirect
     assert_redirected_to new_cms_admin_site_path
@@ -27,10 +27,10 @@ class SitesTest < ActionDispatch::IntegrationTest
   end
   
   def test_get_public_page_with_sites_with_different_paths
-    Cms::Site.delete_all
-    site_a = Cms::Site.create!(:identifier => 'site-a', :hostname => 'test.host', :path => '')
-    site_b = Cms::Site.create!(:identifier => 'site-b', :hostname => 'test.host', :path => 'path-b')
-    site_c = Cms::Site.create!(:identifier => 'site-c', :hostname => 'test.host', :path => 'path-c/child')
+    Cms::CmsSite.delete_all
+    site_a = Cms::CmsSite.create!(:identifier => 'site-a', :hostname => 'test.host', :path => '')
+    site_b = Cms::CmsSite.create!(:identifier => 'site-b', :hostname => 'test.host', :path => 'path-b')
+    site_c = Cms::CmsSite.create!(:identifier => 'site-c', :hostname => 'test.host', :path => 'path-c/child')
     
     [site_a, site_b, site_c].each do |site|
       layout  = site.layouts.create!(:identifier => 'test')

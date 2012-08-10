@@ -27,7 +27,7 @@ class CmsAdmin::BaseController < ApplicationController
 protected
   
   def load_admin_site
-    if @site = Cms::Site.find_by_id(params[:site_id] || session[:site_id]) || Cms::Site.first
+    if @site = Cms::CmsSite.find_by_id(params[:site_id] || session[:site_id]) || Cms::CmsSite.first
       session[:site_id] = @site.id
     else
       I18n.locale = ComfortableMexicanSofa.config.admin_locale || I18n.default_locale

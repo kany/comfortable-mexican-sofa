@@ -20,7 +20,7 @@ class RenderCmsTest < ActionDispatch::IntegrationTest
   end
   
   def create_site_b
-    site    = Cms::Site.create!(
+    site    = Cms::CmsSite.create!(
       :identifier => 'site-b',
       :hostname   => 'site-b.test')
     layout  = site.layouts.create!(

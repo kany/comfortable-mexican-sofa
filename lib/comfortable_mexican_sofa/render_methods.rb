@@ -37,13 +37,13 @@ module ComfortableMexicanSofa::RenderMethods
     def render(options = {}, locals = {}, &block)
       
       if options.is_a?(Hash) && identifier = options.delete(:cms_site)
-        unless @cms_site = Cms::Site.find_by_identifier(identifier)
+        unless @cms_site = Cms::CmsSite.find_by_identifier(identifier)
           raise ComfortableMexicanSofa::MissingSite.new(identifier)
         end
       end
       
       if options.is_a?(Hash) && path = options.delete(:cms_page)
-        @cms_site ||= Cms::Site.find_site(request.host.downcase, request.fullpath)
+        @cms_site ||= Cms::CmsSite.find_site(request.host.downcase, request.fullpath)
         if @cms_page = @cms_site && @cms_site.pages.find_by_full_path(path)
           @cms_layout = @cms_page.layout
           cms_app_layout = @cms_layout.try(:app_layout)
@@ -55,7 +55,7 @@ module ComfortableMexicanSofa::RenderMethods
         end
         
       elsif options.is_a?(Hash) && identifier = options.delete(:cms_layout)
-        @cms_site ||= Cms::Site.find_site(request.host.downcase, request.fullpath)
+        @cms_site ||= Cms::CmsSite.find_site(request.host.downcase, request.fullpath)
         if @cms_layout = @cms_site && @cms_site.layouts.find_by_identifier(identifier)
           cms_app_layout = @cms_layout.try(:app_layout)
           cms_page = @cms_site.pages.build(:layout => @cms_layout)

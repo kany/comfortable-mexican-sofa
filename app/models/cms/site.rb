@@ -1,4 +1,4 @@
-class Cms::Site < ActiveRecord::Base
+class Cms::CmsSite < ActiveRecord::Base
   
   ComfortableMexicanSofa.establish_connection(self)
   
@@ -40,11 +40,11 @@ class Cms::Site < ActiveRecord::Base
   scope :mirrored, where(:is_mirrored => true)
   
   # -- Class Methods --------------------------------------------------------
-  # returning the Cms::Site instance based on host and path
+  # returning the Cms::CmsSite instance based on host and path
   def self.find_site(host, path = nil)
-    return Cms::Site.first if Cms::Site.count == 1
+    return Cms::CmsSite.first if Cms::CmsSite.count == 1
     cms_site = nil
-    Cms::Site.find_all_by_hostname(real_host_from_aliases(host)).each do |site|
+    Cms::CmsSite.find_all_by_hostname(real_host_from_aliases(host)).each do |site|
       if site.path.blank?
         cms_site = site
       elsif "#{path}/".match /^\/#{Regexp.escape(site.path.to_s)}\//
@@ -85,7 +85,7 @@ protected
   def sync_mirrors
     return unless is_mirrored_changed? && is_mirrored?
     
-    [self, Cms::Site.mirrored.where("id != #{id}").first].compact.each do |site|
+    [self, Cms::CmsSite.mirrored.where("id != #{id}").first].compact.each do |site|
       (site.layouts(:reload).roots + site.layouts.roots.map(&:descendants)).flatten.map(&:sync_mirror)
       (site.pages(:reload).roots + site.pages.roots.map(&:descendants)).flatten.map(&:sync_mirror)
       site.snippets(:reload).map(&:sync_mirror)
